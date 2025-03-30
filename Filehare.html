@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+        }
+
+        button {
+            background-color: gray;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #downloadContainer {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            width: 90%;
+        }
+
+        .download-link {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <h1>File Sharing</h1>
+    <main>
+        <input type="file" id="uploadfile"/>
+        <button onclick="generatekey()">Generate Key</button>
+        <p id="keys"></p>
+
+        <input type="text" id="inputkey"/>
+        <button onclick="getFile()">Download file</button>
+        <div id="download-container"></div>
+    </main>
+    </div>
+
+    <script>
+        function generatekey(){
+            let fileInput=document.getElementById("uploadfile").files[0];
+
+            if(!fileInput)
+            {
+                alert("Insert a file!!");
+                return;
+            }
+
+            const key=Math.random().toString(36).substr(2,6);
+
+            const fileURL=URL.createObjectURL(fileInput);
+            localStorage.setItem(key,JSON.stringify({url:fileURL,name:fileInput.name}));
+            document.getElementById("keys").innerHTML=`your Key: <strong>${key}</strong> <br>Share this key to download.`;
+        }
+
+        function getFile(){
+            const key=document.getElementById("inputkey").value.trim();
+            const fileData=JSON.parse(localStorage.getItem(key));
+
+            if (!fileData) {
+                alert("Invalid key! No file found.");
+                return;
+            }
+
+            const downloadConatiner=document.getElementById("download-container");
+            downloadConatiner.innerHTML=`<a href="${fileData.url}" download="${fileData.name}" class="download-link"> Click here to download: ${fileData.name}</a>`;
+        }
+    </script>
+</body>
+</html>
